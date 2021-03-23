@@ -12,6 +12,13 @@
 class CellsGrid
 {
 public:
+    CellsGrid(int x_min, int x_max, int y_min, int y_max) : x_min_(x_min),
+                                                            x_max_(x_max),
+                                                            y_min_(y_min),
+                                                            y_max_(y_max)
+    {
+        cells_img_.create(y_max_ - y_min_, x_max_ - x_min_, CV_8UC3);
+    }
 
     void add_living_cell(int i, int j)
     {
@@ -30,6 +37,15 @@ public:
         for (const auto &set_x : living_cells_)
             for (int y : set_x.second)
                 update_neighbors(set_x.first, y);
+
+        // Second step
+        living_cells_.clear();
+        for (const auto &set_x : tmp_cells_)
+            for (auto y_count : set_x.second)
+                if (y_count.second == 3 || y_count.second == 16 + 2 || y_count.second == 16 + 3)
+                    if (x_min_ <= set_x.first && set_x.first < x_max_ && y_min_ <= y_count.first && y_count.first < y_max_)
+                        living_cells_[set_x.first].insert(y_count.first);
+    }
     }
 
 private:
@@ -42,6 +58,9 @@ private:
 
         tmp_cells_[x_ref][y_ref] += 16;
     }
+
+    const int x_min_, x_max_;
+    const int y_min_, y_max_;
 
     std::map<int, std::set<int>> living_cells_;             // Cell at (i,j) exists <=> living_cells_[i][j] exists
     std::map<int, std::map<int, unsigned char>> tmp_cells_; // Coef at [i,j] counts the number of neighbors of the cell [i,j]
