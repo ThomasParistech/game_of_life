@@ -12,7 +12,8 @@
 CellsGrid::CellsGrid(int x_min, int x_max, int y_min, int y_max) : x_min_(x_min),
                                                                    x_max_(x_max),
                                                                    y_min_(y_min),
-                                                                   y_max_(y_max)
+                                                                   y_max_(y_max),
+                                                                   num_living_cells_(0)
 {
     cells_img_.create(y_max_ - y_min_, x_max_ - x_min_, CV_8UC3);
 }
@@ -20,14 +21,16 @@ CellsGrid::CellsGrid(int x_min, int x_max, int y_min, int y_max) : x_min_(x_min)
 void CellsGrid::add_living_cell(int i, int j)
 {
     living_cells_[i].insert(j);
+    num_living_cells_++;
 }
 
 void CellsGrid::clear()
 {
+    num_living_cells_ = 0;
     living_cells_.clear();
 }
 
-void CellsGrid::update()
+bool CellsGrid::update()
 {
     // First step
     tmp_cells_.clear();
@@ -37,11 +40,24 @@ void CellsGrid::update()
 
     // Second step
     living_cells_.clear();
+    int new_borns = 0;
+    int survivors = 0;
     for (const auto &set_x : tmp_cells_)
         for (auto y_count : set_x.second)
-            if (y_count.second == 3 || y_count.second == 16 + 2 || y_count.second == 16 + 3)
-                if (x_min_ <= set_x.first && set_x.first < x_max_ && y_min_ <= y_count.first && y_count.first < y_max_)
-                    living_cells_[set_x.first].insert(y_count.first);
+        {
+            if (y_count.second == 3)
+                new_borns++;
+            else if (y_count.second == 16 + 2 || y_count.second == 16 + 3)
+                survivors++;
+            else
+                continue;
+
+            if (x_min_ <= set_x.first && set_x.first < x_max_ && y_min_ <= y_count.first && y_count.first < y_max_)
+                living_cells_[set_x.first].insert(y_count.first);
+        }
+    const bool has_changed = (new_borns != 0) || (survivors != num_living_cells_);
+    num_living_cells_ = new_borns + survivors;
+    return has_changed;
 }
 
 void CellsGrid::generate_image(cv::Mat &output_img, int output_width, int output_height)

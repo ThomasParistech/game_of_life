@@ -17,11 +17,12 @@ class CellsGrid
 {
 public:
     CellsGrid(int x_min, int x_max, int y_min, int y_max);
+
     void add_living_cell(int i, int j);
 
     void clear();
 
-    void update();
+    bool update();
 
     void generate_image(cv::Mat &output_img, int output_width, int output_height);
 
@@ -32,6 +33,7 @@ private:
     const int x_min_, x_max_;
     const int y_min_, y_max_;
 
+    int num_living_cells_;
     std::map<int, std::set<int>> living_cells_;             // Cell at (i,j) exists <=> living_cells_[i][j] exists
     std::map<int, std::map<int, unsigned char>> tmp_cells_; // Coef at [i,j] counts the number of neighbors of the cell [i,j]
                                                             // There's maximum 8 neighbors. If the cell was alive, we add 16

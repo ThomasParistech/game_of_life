@@ -9,11 +9,13 @@
 #include <iostream>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <time.h>
 #include "cells_grid.h"
 
 int main(int argc, char **argv)
 {
     // Init living cells
+    srand(time(nullptr));
     int x_min = 0;
     int x_max = 100;
     int y_min = 0;
@@ -31,7 +33,9 @@ int main(int argc, char **argv)
                                  cv::Size(output_width, output_heigth));
 
     cv::Mat img;
-    for (int k = 0; k < 900; k++)
+    bool keep_updating = true;
+    int k = 0;
+    while (keep_updating)
     {
         std::cout << "Update " << k << std::endl;
         grid.generate_image(img, output_width, output_heigth);
@@ -41,7 +45,8 @@ int main(int argc, char **argv)
         video_writer.write(img);
         cv::imshow("", img);
         cv::waitKey(1);
-        grid.update();
+        keep_updating = grid.update();
+        k++;
     }
 
     return 0;
