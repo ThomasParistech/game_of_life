@@ -9,6 +9,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <iostream>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
@@ -94,6 +95,20 @@ int main(int argc, char **argv)
         for (int j = y_min; j < y_max; j++)
             if ((static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) < proba)
                 grid.add_living_cell(i, j);
+
+
+    cv::Mat img;
+    for (int k = 0; k < 900; k++)
+    {
+        std::cout << "Update " << k << std::endl;
+        grid.generate_image(img, output_width, output_heigth);
+        cv::putText(img, std::to_string(k), cv::Point(5, 30), cv::FONT_HERSHEY_SIMPLEX, 1,
+                    cv::Vec3b(0, 0, 255), 2, cv::LINE_AA);
+
+        cv::imshow("", img);
+        cv::waitKey(0);
+        grid.update();
+    }
 
     return 0;
 }
