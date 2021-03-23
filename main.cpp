@@ -96,6 +96,10 @@ int main(int argc, char **argv)
             if ((static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) < proba)
                 grid.add_living_cell(i, j);
 
+    const int output_width = 600;
+    const int output_heigth = 450;
+    cv::VideoWriter video_writer("/tmp/game_of_life.mp4", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), 30,
+                                 cv::Size(output_width, output_heigth));
 
     cv::Mat img;
     for (int k = 0; k < 900; k++)
@@ -105,6 +109,7 @@ int main(int argc, char **argv)
         cv::putText(img, std::to_string(k), cv::Point(5, 30), cv::FONT_HERSHEY_SIMPLEX, 1,
                     cv::Vec3b(0, 0, 255), 2, cv::LINE_AA);
 
+        video_writer.write(img);
         cv::imshow("", img);
         cv::waitKey(0);
         grid.update();
