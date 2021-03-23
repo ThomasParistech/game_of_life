@@ -9,6 +9,9 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
 class CellsGrid
 {
 public:
@@ -46,6 +49,15 @@ public:
                     if (x_min_ <= set_x.first && set_x.first < x_max_ && y_min_ <= y_count.first && y_count.first < y_max_)
                         living_cells_[set_x.first].insert(y_count.first);
     }
+
+    void generate_image(cv::Mat &output_img, int output_width, int output_height)
+    {
+        cells_img_.setTo(cv::Vec3b::all(255)); // White background
+        for (const auto &set_x : living_cells_)
+            for (int y : set_x.second)
+                cells_img_.at<cv::Vec3b>(y, set_x.first) = cv::Vec3b::all(0); // Black cell
+
+        cv::resize(cells_img_, output_img, cv::Size(output_width, output_height), 0, 0, cv::INTER_NEAREST);
     }
 
 private:
@@ -59,6 +71,7 @@ private:
         tmp_cells_[x_ref][y_ref] += 16;
     }
 
+    cv::Mat cells_img_;
     const int x_min_, x_max_;
     const int y_min_, y_max_;
 
