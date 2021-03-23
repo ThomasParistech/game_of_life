@@ -83,6 +83,17 @@ private:
 
 int main(int argc, char **argv)
 {
+    // Init living cells
+    int x_min = 0;
+    int x_max = 100;
+    int y_min = 0;
+    int y_max = 75;
+    CellsGrid grid(x_min, x_max, y_min, y_max);
+    double proba = 0.4;
+    for (int i = x_min; i < x_max; i++)
+        for (int j = y_min; j < y_max; j++)
+            if ((static_cast<float>(rand()) / static_cast<float>(RAND_MAX)) < proba)
+                grid.add_living_cell(i, j);
 
     return 0;
 }
