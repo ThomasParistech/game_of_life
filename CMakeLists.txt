@@ -8,5 +8,5 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 find_package(OpenCV REQUIRED)
 find_package(Boost REQUIRED COMPONENTS filesystem system program_options)
 
-add_executable(main main.cpp)
+add_executable(main cells_grid.cpp main.cpp)
 target_link_libraries(main ${OpenCV_LIBS} ${Boost_LIBRARIES})
