@@ -25,5 +25,5 @@ Go to the build directory and run the app
 bin/main
 ```
 
-![](./game_of_life.mp4)
+![](./game_of_life.gif)
 
